@@ -18,7 +18,7 @@ class FeaturedVehicles extends StatelessWidget {
         }
 
         return SizedBox(
-          height: 280,
+          height: 320,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -75,7 +75,10 @@ class FeaturedVehicles extends StatelessWidget {
                       // Vehicle info section
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -103,8 +106,6 @@ class FeaturedVehicles extends StatelessWidget {
                                   _buildFavoriteButton(context, vehicle),
                                 ],
                               ),
-
-                              const SizedBox(height: 6),
 
                               // Model and category
                               Text(
@@ -439,37 +440,6 @@ class FeaturedVehicles extends StatelessWidget {
                 ),
               ),
           ],
-        ),
-
-        // Action button
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Text(
-                'Ko\'rish',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: 4),
-              Icon(Icons.arrow_forward_ios, size: 12, color: Colors.white),
-            ],
-          ),
         ),
       ],
     );
