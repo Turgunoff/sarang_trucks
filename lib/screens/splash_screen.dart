@@ -1,3 +1,4 @@
+// lib/screens/splash_screen.dart - TUZATILGAN VERSIYA
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
@@ -21,6 +22,11 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
+    _checkOnboardingAndNavigate();
+  }
+
+  void _initializeAnimations() {
     _animationController = AnimationController(
       duration: AppConstants.splashDuration,
       vsync: this,
@@ -35,21 +41,39 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _animationController.forward();
-
-    _checkOnboardingAndNavigate();
   }
 
   Future<void> _checkOnboardingAndNavigate() async {
-    await Future.delayed(AppConstants.splashDuration);
+    try {
+      final appProvider = context.read<AppProvider>();
 
-    if (!mounted) return;
+      // 🔧 TUZATISH: Onboarding statusini tekshirish
+      final isOnboardingCompleted = await appProvider.checkOnboardingStatus();
 
-    final appProvider = context.read<AppProvider>();
+      debugPrint(
+        '✅ Splash: Onboarding holati - ${isOnboardingCompleted ? "Yakunlangan" : "Yakunlanmagan"}',
+      );
 
-    if (appProvider.isOnboardingCompleted) {
-      _navigateToMain();
-    } else {
-      _navigateToOnboarding();
+      // Minimum splash vaqtini kutish
+      await Future.delayed(AppConstants.splashDuration);
+
+      if (!mounted) return;
+
+      // 🔧 TUZATISH: Statusga qarab yo'naltirish
+      if (isOnboardingCompleted) {
+        debugPrint('✅ Splash: Main screenga o\'tish');
+        _navigateToMain();
+      } else {
+        debugPrint('✅ Splash: Onboarding screenga o\'tish');
+        _navigateToOnboarding();
+      }
+    } catch (e) {
+      debugPrint('❌ Splash: Xatolik - $e');
+      // Xatolik bo'lsa, onboardingga yo'naltirish
+      await Future.delayed(AppConstants.splashDuration);
+      if (mounted) {
+        _navigateToOnboarding();
+      }
     }
   }
 
@@ -100,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Logo placeholder (you can replace with actual logo)
+                    // Logo container with glow effect
                     Container(
                       width: 120,
                       height: 120,
@@ -108,6 +132,11 @@ class _SplashScreenState extends State<SplashScreen>
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.3),
+                            blurRadius: 30,
+                            spreadRadius: 5,
+                          ),
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 20,
@@ -121,9 +150,10 @@ class _SplashScreenState extends State<SplashScreen>
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
+
                     const SizedBox(height: 30),
 
-                    // App Name
+                    // App Name with letter spacing
                     Text(
                       AppConstants.appName,
                       style: const TextStyle(
@@ -131,6 +161,13 @@ class _SplashScreenState extends State<SplashScreen>
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 1.2,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                            color: Colors.black26,
+                          ),
+                        ],
                       ),
                     ),
 
@@ -143,16 +180,36 @@ class _SplashScreenState extends State<SplashScreen>
                         fontSize: 16,
                         color: Colors.white70,
                         letterSpacing: 0.5,
+                        fontWeight: FontWeight.w300,
                       ),
                       textAlign: TextAlign.center,
                     ),
 
                     const SizedBox(height: 60),
 
-                    // Loading indicator
-                    const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      strokeWidth: 3,
+                    // Loading indicator with pulsing effect
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 3,
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Loading text
+                    const Text(
+                      'Yuklanmoqda...',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white60,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ],
                 ),

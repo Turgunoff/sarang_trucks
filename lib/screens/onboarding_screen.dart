@@ -124,21 +124,60 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   Future<void> _completeOnboarding() async {
-    final appProvider = context.read<AppProvider>();
-    await appProvider.completeOnboarding();
+    try {
+      // 🔧 LOADING ANIMATION
+      setState(() {
+        // Loading holatini ko'rsatish uchun
+      });
 
-    if (!mounted) return;
+      final appProvider = context.read<AppProvider>();
 
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const MainScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: AppConstants.pageTransitionDuration,
-      ),
-    );
+      // 🔧 TUZATISH: Onboardingni yakunlash
+      await appProvider.completeOnboarding();
+
+      debugPrint('✅ Onboarding yakunlandi, Main screenga o\'tish');
+
+      if (!mounted) return;
+
+      // 🔧 TUZATISH: Main screenga o'tish
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const MainScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeOut),
+                ),
+                child: child,
+              ),
+            );
+          },
+          transitionDuration: AppConstants.pageTransitionDuration,
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ Onboarding yakunlashda xatolik: $e');
+
+      if (!mounted) return;
+
+      // Xatolik haqida foydalanuvchini xabardor qilish
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Xatolik yuz berdi. Qayta urinib ko\'ring.',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
   }
 
   @override
