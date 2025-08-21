@@ -1,7 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/category.dart';
 import '../models/vehicle.dart';
-import '../models/company_info.dart';
 import '../constants/app_constants.dart';
 
 class SupabaseService {
@@ -94,23 +93,6 @@ class SupabaseService {
 
   static Future<List<Vehicle>> getFeaturedVehicles({int limit = 5}) async {
     return getVehicles(isFeatured: true, limit: limit);
-  }
-
-  // Company Info
-  static Future<CompanyInfo?> getCompanyInfo() async {
-    try {
-      final response = await _client
-          .from(AppConstants.companyInfoTable)
-          .select()
-          .limit(1);
-
-      if (response != null && response.isNotEmpty) {
-        return CompanyInfo.fromJson(response.first);
-      }
-      return null;
-    } catch (e) {
-      throw Exception('Kompaniya ma\'lumotlarini yuklashda xatolik: $e');
-    }
   }
 
   // Search - simplified

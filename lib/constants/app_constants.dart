@@ -1,3 +1,4 @@
+// lib/constants/app_constants.dart
 class AppConstants {
   // App Info
   static const String appName = 'Sarang Trucks';
@@ -5,10 +6,8 @@ class AppConstants {
   static const String appDescription = 'Professional yuk mashinalari ijarasi';
 
   // Supabase Configuration
-  static const String supabaseUrl =
-      'https://rlqvwuylaphnfdlxspkn.supabase.co'; // SupabaseConfig.url ni ishlating
-  static const String supabaseAnonKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscXZ3dXlsYXBobmZkbHhzcGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NDg3NTAsImV4cCI6MjA3MTMyNDc1MH0.1DIztj64kMERBkmxSYTIpeJahLmYim1A5O2NLY9I1H0'; // SupabaseConfig.anonKey ni ishlating
+  static const String supabaseUrl = 'https://rlqvwuylaphnfdlxspkn.supabase.co';
+  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscXZ3dXlsYXBobmZkbHhzcGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NDg3NTAsImV4cCI6MjA3MTMyNDc1MH0.1DIztj64kMERBkmxSYTIpeJahLmYim1A5O2NLY9I1H0';
 
   // Storage Buckets
   static const String vehicleImagesBucket = 'vehicle-images';
@@ -21,18 +20,7 @@ class AppConstants {
 
   // SharedPreferences Keys
   static const String favoritesKey = 'favorites';
-  static const String languageKey = 'language';
-  static const String themeKey = 'theme';
   static const String onboardingKey = 'onboarding_completed';
-
-  // Languages
-  static const String uzLanguage = 'uz';
-  static const String ruLanguage = 'ru';
-
-  // Themes
-  static const String lightTheme = 'light';
-  static const String darkTheme = 'dark';
-  static const String systemTheme = 'system';
 
   // Default Values
   static const int defaultPageSize = 20;

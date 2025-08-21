@@ -1,7 +1,8 @@
+// lib/models/vehicle.dart
 import 'category.dart';
-import 'vehicle_image.dart';
 
 enum EngineType { diesel, petrol }
+
 enum TransmissionType { manual, automatic }
 
 class Vehicle {
@@ -24,7 +25,7 @@ class Vehicle {
   final bool isAvailable;
   final bool isFeatured;
   final DateTime createdAt;
-  final List<VehicleImage> images;
+  final List<String> images; // Soddalashtirilgan rasm ro'yxati
 
   Vehicle({
     required this.id,
@@ -50,6 +51,15 @@ class Vehicle {
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
+    // Rasmlarni 5 ta ustundan yig'ish
+    List<String> imageList = [];
+    for (int i = 1; i <= 5; i++) {
+      final imageUrl = json['image_$i'] as String?;
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        imageList.add(imageUrl);
+      }
+    }
+
     return Vehicle(
       id: json['id'] as String,
       name: json['name'] as String,
@@ -66,12 +76,12 @@ class Vehicle {
         orElse: () => TransmissionType.manual,
       ),
       bodyType: json['body_type'] as String?,
-      priceHourly: json['price_hourly'] != null 
-          ? (json['price_hourly'] as num).toDouble() 
+      priceHourly: json['price_hourly'] != null
+          ? (json['price_hourly'] as num).toDouble()
           : null,
       priceDaily: (json['price_daily'] as num).toDouble(),
-      priceWeekly: json['price_weekly'] != null 
-          ? (json['price_weekly'] as num).toDouble() 
+      priceWeekly: json['price_weekly'] != null
+          ? (json['price_weekly'] as num).toDouble()
           : null,
       hasDriver: json['has_driver'] as bool? ?? false,
       hasAC: json['has_ac'] as bool? ?? false,
@@ -80,16 +90,12 @@ class Vehicle {
       isAvailable: json['is_available'] as bool? ?? true,
       isFeatured: json['is_featured'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
-      images: json['vehicle_images'] != null
-          ? (json['vehicle_images'] as List)
-              .map((img) => VehicleImage.fromJson(img))
-              .toList()
-          : [],
+      images: imageList,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    Map<String, dynamic> data = {
       'id': id,
       'name': name,
       'model': model,
@@ -110,21 +116,17 @@ class Vehicle {
       'is_featured': isFeatured,
       'created_at': createdAt.toIso8601String(),
     };
+
+    // Rasmlarni 5 ta ustunга joylash
+    for (int i = 1; i <= 5; i++) {
+      data['image_$i'] = i <= images.length ? images[i - 1] : null;
+    }
+
+    return data;
   }
 
   String? get primaryImageUrl {
-    final primaryImage = images.firstWhere(
-      (img) => img.isPrimary,
-      orElse: () => images.isNotEmpty ? images.first : VehicleImage(
-        id: '',
-        vehicleId: id,
-        imagePath: '',
-        isPrimary: false,
-        orderIndex: 0,
-        createdAt: DateTime.now(),
-      ),
-    );
-    return primaryImage.imagePath.isNotEmpty ? primaryImage.imagePath : null;
+    return images.isNotEmpty ? images.first : null;
   }
 
   String get engineTypeText {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/category.dart';
@@ -15,13 +16,11 @@ class CategoryList extends StatelessWidget {
         }
 
         if (vehicleProvider.categories.isEmpty) {
-          return const Center(
-            child: Text('Kategoriyalar topilmadi'),
-          );
+          return const Center(child: Text('Kategoriyalar topilmadi'));
         }
 
         return SizedBox(
-          height: 100,
+          height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: vehicleProvider.categories.length,
@@ -41,9 +40,7 @@ class CategoryList extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: InkWell(
           onTap: () {
             // Navigate to catalog with category filter
@@ -55,10 +52,20 @@ class CategoryList extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.local_shipping,
-                  size: 32,
-                  color: Theme.of(context).colorScheme.primary,
+                // ✅ TO'G'RI YECHIM
+                SvgPicture.network(
+                  category.iconUrl!,
+                  width: 32,
+                  height: 32,
+                  // colorFilter: ColorFilter.mode(
+                  //   Theme.of(context).colorScheme.primary,
+                  //   BlendMode.srcIn,
+                  // ),
+                  placeholderBuilder: (context) => Icon(
+                    Icons.local_shipping,
+                    size: 32,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
