@@ -487,7 +487,7 @@ class _QuickContactState extends State<QuickContact>
       context,
       icon: Icons.phone_rounded,
       title: 'Telefon qo\'ng\'iroq',
-      subtitle: '+998 90 123 45 67',
+      subtitle: '+998 93 373 31 18',
       color: Colors.green,
     );
   }
@@ -497,7 +497,7 @@ class _QuickContactState extends State<QuickContact>
       context,
       icon: Icons.telegram,
       title: 'Telegram ochilmoqda',
-      subtitle: '@sarang_trucks',
+      subtitle: 'https://t.me/sarang_trucks',
       color: Colors.blue,
     );
   }
@@ -507,7 +507,7 @@ class _QuickContactState extends State<QuickContact>
       context,
       icon: Icons.chat_rounded,
       title: 'WhatsApp ochilmoqda',
-      subtitle: 'Chat boshlash',
+      subtitle: 'https://wa.me/998933733118',
       color: Colors.green,
     );
   }

@@ -1,4 +1,4 @@
-// lib/screens/home_screen.dart - YAXSHILANGAN UI VERSIYA
+// lib/screens/home_screen.dart - TUZATILGAN VERSIYA
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -57,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(
+        context,
+      ).colorScheme.surface, // 🔧 TUZATILDI: background → surface
       body: RefreshIndicator(
         onRefresh: () async {
           _fadeController.reset();
@@ -68,10 +70,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // ✅ YAXSHILANGAN: Modern app bar with gradient
+            // Modern app bar with gradient
             _buildAppBar(),
 
-            // ✅ YAXSHILANGAN: Content with animation
+            // Content with animation
             SliverToBoxAdapter(
               child: FadeTransition(
                 opacity: _fadeAnimation,
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     children: [
                       const SizedBox(height: 20),
 
-                      // ✅ Hero Section with animation
+                      // Hero Section with animation
                       _buildAnimatedSection(
                         delay: 0,
                         child: const HeroSection(),
@@ -90,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       const SizedBox(height: 40),
 
-                      // ✅ Categories Section
+                      // Categories Section
                       _buildSectionHeader(
                         'Kategoriyalar',
                         'Kerakli toifani tanlang',
@@ -114,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       const SizedBox(height: 40),
 
-                      // ✅ Featured Vehicles Section
+                      // Featured Vehicles Section
                       _buildSectionHeader(
                         'Tavsiya etilgan mashinalar',
                         'Eng mashhur va ishonchli variantlar',
@@ -138,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       const SizedBox(height: 40),
 
-                      // ✅ Statistics section (new)
+                      // Statistics section
                       _buildAnimatedSection(
                         delay: 600,
                         child: _buildStatisticsSection(),
@@ -146,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                       const SizedBox(height: 40),
 
-                      // ✅ Quick Contact with animation
+                      // Quick Contact with animation
                       _buildAnimatedSection(
                         delay: 800,
                         child: const QuickContact(),
@@ -164,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YAXSHILANGAN: Modern gradient app bar
+  // Modern gradient app bar
   Widget _buildAppBar() {
     return SliverAppBar(
       expandedHeight: 140,
@@ -274,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YANGI: Animated section wrapper
+  // Animated section wrapper
   Widget _buildAnimatedSection({required int delay, required Widget child}) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 600 + delay),
@@ -290,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YAXSHILANGAN: Section headers with icons
+  // Section headers with icons
   Widget _buildSectionHeader(String title, String subtitle, IconData icon) {
     return Row(
       children: [
@@ -317,7 +319,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 title,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onBackground,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface, // 🔧 TUZATILDI
                 ),
               ),
               const SizedBox(height: 4),
@@ -336,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YANGI: Statistics section
+  // Statistics section
   Widget _buildStatisticsSection() {
     return Consumer<VehicleProvider>(
       builder: (context, provider, child) {
@@ -449,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YANGI: Category shimmer loading
+  // Category shimmer loading
   Widget _buildCategoryShimmer() {
     return SizedBox(
       height: 120,
@@ -516,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // ✅ YANGI: Featured vehicles shimmer loading
+  // Featured vehicles shimmer loading
   Widget _buildFeaturedShimmer() {
     return SizedBox(
       height: 220,
@@ -610,7 +614,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 }
 
-// ✅ YANGI: Custom painter for background pattern
+// Custom painter for background pattern
 class _PatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

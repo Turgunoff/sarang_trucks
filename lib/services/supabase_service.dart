@@ -1,4 +1,4 @@
-// lib/services/supabase_service.dart
+// lib/services/supabase_service.dart - TUZATILGAN VERSIYA
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/category.dart';
 import '../models/vehicle.dart';
@@ -15,13 +15,12 @@ class SupabaseService {
           .select()
           .order('order_index');
 
-      if (response != null) {
-        return (response as List)
-            .map((json) => Category.fromJson(json))
-            .toList();
+      if (response != null && response is List) {
+        return response.map((json) => Category.fromJson(json)).toList();
       }
       return [];
     } catch (e) {
+      print('Categories xatoligi: $e');
       throw Exception('Kategoriyalarni yuklashda xatolik: $e');
     }
   }
@@ -37,53 +36,151 @@ class SupabaseService {
     int offset = 0,
   }) async {
     try {
-      // Categories bilan join query - BU MUHIM!
-      final response = await _client
+      // 🔧 TUZATILDI: To'g'ri join sintaksisi
+      var query = _client
           .from(AppConstants.vehiclesTable)
           .select('''
-            *,
-            categories!inner(*)
+            id,
+            name,
+            model,
+            category_id,
+            year,
+            capacity_tons,
+            engine_type,
+            transmission,
+            body_type,
+            price_hourly,
+            price_daily,
+            price_weekly,
+            has_driver,
+            has_ac,
+            has_gps,
+            description,
+            is_available,
+            is_featured,
+            created_at,
+            images,
+            categories!vehicles_category_id_fkey(
+              id,
+              name,
+              icon_url,
+              order_index,
+              created_at
+            )
           ''')
-          .eq('is_available', true)
-          .order('created_at', ascending: false);
+          .eq('is_available', true);
 
-      if (response != null) {
-        List<Vehicle> vehicles = (response as List)
-            .map((json) => Vehicle.fromJson(json))
-            .toList();
+      // Apply database-level filters
+      if (categoryId != null) {
+        query = query.eq('category_id', categoryId);
+      }
+      if (minCapacity != null) {
+        query = query.gte('capacity_tons', minCapacity);
+      }
+      if (maxPrice != null) {
+        query = query.lte('price_daily', maxPrice);
+      }
+      if (isFeatured != null) {
+        query = query.eq('is_featured', isFeatured);
+      }
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        query = query.or(
+          'name.ilike.%$searchQuery%,model.ilike.%$searchQuery%',
+        );
+      }
 
-        // Apply filters in memory
-        if (categoryId != null) {
-          vehicles = vehicles
-              .where((v) => v.category.id == categoryId)
-              .toList();
-        }
-        if (minCapacity != null) {
-          vehicles = vehicles
-              .where((v) => v.capacityTons >= minCapacity)
-              .toList();
-        }
-        if (maxPrice != null) {
-          vehicles = vehicles.where((v) => v.priceDaily <= maxPrice).toList();
-        }
-        if (isFeatured != null) {
-          vehicles = vehicles.where((v) => v.isFeatured == isFeatured).toList();
-        }
-        if (searchQuery != null && searchQuery.isNotEmpty) {
-          vehicles = vehicles
-              .where(
-                (v) =>
-                    v.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-                    v.model.toLowerCase().contains(searchQuery.toLowerCase()),
-              )
-              .toList();
-        }
+      final response = await query
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
 
-        return vehicles.skip(offset).take(limit).toList();
+      if (response != null && response is List) {
+        return response.map((json) => Vehicle.fromJson(json)).toList();
       }
       return [];
     } catch (e) {
-      print('Supabase xatoligi: $e'); // Debug uchun
+      print('Vehicles xatoligi: $e');
+      // Fallback: Agar join ishlamasa, alohida query
+      return await _getVehiclesWithSeparateQueries(
+        categoryId: categoryId,
+        minCapacity: minCapacity,
+        maxPrice: maxPrice,
+        searchQuery: searchQuery,
+        isFeatured: isFeatured,
+        limit: limit,
+        offset: offset,
+      );
+    }
+  }
+
+  // 🔧 FALLBACK: Alohida query'lar bilan
+  static Future<List<Vehicle>> _getVehiclesWithSeparateQueries({
+    String? categoryId,
+    double? minCapacity,
+    double? maxPrice,
+    String? searchQuery,
+    bool? isFeatured,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    try {
+      // 1. Mashinalarni olish
+      var vehiclesQuery = _client
+          .from(AppConstants.vehiclesTable)
+          .select()
+          .eq('is_available', true);
+
+      if (categoryId != null) {
+        vehiclesQuery = vehiclesQuery.eq('category_id', categoryId);
+      }
+      if (minCapacity != null) {
+        vehiclesQuery = vehiclesQuery.gte('capacity_tons', minCapacity);
+      }
+      if (maxPrice != null) {
+        vehiclesQuery = vehiclesQuery.lte('price_daily', maxPrice);
+      }
+      if (isFeatured != null) {
+        vehiclesQuery = vehiclesQuery.eq('is_featured', isFeatured);
+      }
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        vehiclesQuery = vehiclesQuery.or(
+          'name.ilike.%$searchQuery%,model.ilike.%$searchQuery%',
+        );
+      }
+
+      final vehiclesResponse = await vehiclesQuery
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+
+      if (vehiclesResponse == null || vehiclesResponse is! List) {
+        return [];
+      }
+
+      // 2. Kategoriyalarni olish
+      final categoriesResponse = await _client
+          .from(AppConstants.categoriesTable)
+          .select();
+
+      Map<String, dynamic> categoriesMap = {};
+      if (categoriesResponse != null && categoriesResponse is List) {
+        for (var category in categoriesResponse) {
+          categoriesMap[category['id']] = category;
+        }
+      }
+
+      // 3. Mashinalarni kategoriyalar bilan birlashtirish
+      List<Vehicle> vehicles = [];
+      for (var vehicleJson in vehiclesResponse) {
+        final categoryData = categoriesMap[vehicleJson['category_id']];
+        if (categoryData != null) {
+          // Kategoriya ma'lumotlarini qo'shish
+          vehicleJson['categories'] = categoryData;
+          vehicles.add(Vehicle.fromJson(vehicleJson));
+        }
+      }
+
+      return vehicles;
+    } catch (e) {
+      print('Fallback query xatoligi: $e');
       throw Exception('Mashinalarni yuklashda xatolik: $e');
     }
   }
@@ -94,7 +191,7 @@ class SupabaseService {
           .from(AppConstants.vehiclesTable)
           .select('''
             *,
-            categories!inner(*)
+            categories!vehicles_category_id_fkey(*)
           ''')
           .eq('id', vehicleId)
           .single();
@@ -104,6 +201,7 @@ class SupabaseService {
       }
       return null;
     } catch (e) {
+      print('Vehicle by ID xatoligi: $e');
       throw Exception('Mashina ma\'lumotlarini yuklashda xatolik: $e');
     }
   }
@@ -112,7 +210,6 @@ class SupabaseService {
     return getVehicles(isFeatured: true, limit: limit);
   }
 
-  // Search - categories bilan
   static Future<List<Vehicle>> searchVehicles(String query) async {
     return getVehicles(searchQuery: query);
   }
