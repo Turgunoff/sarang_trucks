@@ -1,18 +1,15 @@
 # Sarang Trucks Mobile App
 
-Professional yuk mashinalari ijarasi uchun Flutter ilovasi.
+Professional yuk mashinalari ijarasi ilovasi
 
-## 🚀 Features
+## Features
 
-- **Splash Screen** - Beautiful app introduction
-- **Onboarding** - 3 ta slide bilan app haqida ma'lumot
-- **Bottom Navigation** - 4 ta asosiy sahifa
-- **Home Screen** - Hero section, kategoriyalar, tavsiya etilgan mashinalar
-- **Catalog** - Mashinalar katalogi va filter
-- **Favorites** - Sevimli mashinalar
+- **Splash Screen** - Ilova ochilish ekrani
+- **Onboarding** - 3 ta kirish sahifasi
+- **Home Screen** - Bosh sahifa
+- **Catalog** - Mashinalar katalogi
 - **Contact** - Bog'lanish ma'lumotlari
-- **Dark/Light Theme** - Mavzu almashish
-- **Uzbek/Russian** - Til qo'llab-quvvatlash
+- **Settings** - Sozlamalar
 
 ## 🛠 Tech Stack
 
@@ -149,7 +146,6 @@ lib/
 │   ├── main_screen.dart        # Main screen with navigation
 │   ├── home_screen.dart        # Home screen
 │   ├── catalog_screen.dart     # Catalog screen
-│   ├── favorites_screen.dart   # Favorites screen
 │   └── contact_screen.dart     # Contact screen
 ├── widgets/
 │   ├── hero_section.dart       # Hero section widget

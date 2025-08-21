@@ -725,12 +725,8 @@ class _CatalogScreenState extends State<CatalogScreen>
                   padding: const EdgeInsets.only(bottom: 16),
                   child: VehicleCard(
                     vehicle: vehicle,
-                    isFavorite: vehicleProvider.isFavorite(vehicle.id),
                     onTap: () {
                       _navigateToVehicleDetails(vehicle);
-                    },
-                    onFavoriteToggle: () {
-                      vehicleProvider.toggleFavorite(vehicle.id);
                     },
                   ),
                 ),

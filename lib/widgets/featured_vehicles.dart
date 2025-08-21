@@ -82,7 +82,7 @@ class FeaturedVehicles extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Title and favorite button
+                              // Title
                               Row(
                                 children: [
                                   Expanded(
@@ -101,9 +101,6 @@ class FeaturedVehicles extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-
-                                  // Favorite button
-                                  _buildFavoriteButton(context, vehicle),
                                 ],
                               ),
 
@@ -307,58 +304,6 @@ class FeaturedVehicles extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildFavoriteButton(BuildContext context, Vehicle vehicle) {
-    return Consumer<VehicleProvider>(
-      builder: (context, provider, child) {
-        final isFavorite = provider.isFavorite(vehicle.id);
-
-        return InkWell(
-          onTap: () {
-            provider.toggleFavorite(vehicle.id);
-
-            // Show feedback
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  isFavorite
-                      ? 'Sevimlilardan olib tashlandi'
-                      : 'Sevimlilarga qo\'shildi',
-                ),
-                duration: const Duration(seconds: 1),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isFavorite
-                  ? Colors.red.withOpacity(0.1)
-                  : Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isFavorite
-                    ? Colors.red.withOpacity(0.3)
-                    : Theme.of(context).colorScheme.outline.withOpacity(0.2),
-              ),
-            ),
-            child: Icon(
-              isFavorite ? Icons.favorite : Icons.favorite_border,
-              size: 18,
-              color: isFavorite
-                  ? Colors.red
-                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        );
-      },
     );
   }
 

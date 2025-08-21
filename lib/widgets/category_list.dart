@@ -54,8 +54,10 @@ class CategoryList extends StatelessWidget {
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.elasticOut,
       builder: (context, value, child) {
+        // Scale qiymatini musbat qilib saqlash
+        final safeScale = value.clamp(0.0, 2.0);
         return Transform.scale(
-          scale: value,
+          scale: safeScale,
           child: Container(
             width: 130,
             margin: const EdgeInsets.only(right: 16),

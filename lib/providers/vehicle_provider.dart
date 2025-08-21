@@ -9,7 +9,6 @@ class VehicleProvider extends ChangeNotifier {
   List<Vehicle> _featuredVehicles = [];
   List<Category> _categories = [];
   List<Vehicle> _searchResults = [];
-  List<String> _favorites = [];
 
   bool _isLoading = false;
   bool _isSearching = false;
@@ -29,7 +28,6 @@ class VehicleProvider extends ChangeNotifier {
   List<Vehicle> get featuredVehicles => _featuredVehicles;
   List<Category> get categories => _categories;
   List<Vehicle> get searchResults => _searchResults;
-  List<String> get favorites => _favorites;
   bool get isLoading => _isLoading;
   bool get isSearching => _isSearching;
   String? get error => _error;
@@ -54,7 +52,6 @@ class VehicleProvider extends ChangeNotifier {
   }
 
   VehicleProvider() {
-    _loadFavorites();
     _loadInitialData();
   }
 
@@ -100,6 +97,8 @@ class VehicleProvider extends ChangeNotifier {
       } else {
         _vehicles.addAll(newVehicles);
       }
+
+      _error = null;
     } catch (e) {
       _error = SupabaseService.getErrorMessage(e);
     } finally {
@@ -119,13 +118,6 @@ class VehicleProvider extends ChangeNotifier {
 
   // Search vehicles
   Future<void> searchVehicles(String query) async {
-    if (query.isEmpty) {
-      _searchResults.clear();
-      _isSearching = false;
-      notifyListeners();
-      return;
-    }
-
     try {
       _isSearching = true;
       _searchQuery = query;
@@ -169,39 +161,6 @@ class VehicleProvider extends ChangeNotifier {
     _hasGPS = false;
 
     await loadVehicles(refresh: true);
-  }
-
-  // Load favorites from SharedPreferences
-  Future<void> _loadFavorites() async {
-    // This would be implemented with SharedPreferences
-    // For now, using empty list
-    _favorites = [];
-  }
-
-  // Toggle favorite
-  Future<void> toggleFavorite(String vehicleId) async {
-    if (_favorites.contains(vehicleId)) {
-      _favorites.remove(vehicleId);
-    } else {
-      _favorites.add(vehicleId);
-    }
-
-    // Save to SharedPreferences
-    // await _saveFavorites();
-
-    notifyListeners();
-  }
-
-  // Check if vehicle is favorite
-  bool isFavorite(String vehicleId) {
-    return _favorites.contains(vehicleId);
-  }
-
-  // Get favorite vehicles
-  List<Vehicle> getFavoriteVehicles() {
-    return _vehicles
-        .where((vehicle) => _favorites.contains(vehicle.id))
-        .toList();
   }
 
   // Set loading state

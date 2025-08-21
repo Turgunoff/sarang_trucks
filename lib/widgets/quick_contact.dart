@@ -397,8 +397,10 @@ class _QuickContactState extends State<QuickContact>
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.elasticOut,
       builder: (context, value, child) {
+        // Scale qiymatini musbat qilib saqlash
+        final safeScale = value.clamp(0.0, 2.0);
         return Transform.scale(
-          scale: value,
+          scale: safeScale,
           child: AnimatedBuilder(
             animation: _buttonControllers[index],
             builder: (context, child) {

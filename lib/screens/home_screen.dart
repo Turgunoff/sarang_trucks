@@ -22,20 +22,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
+
     // Animation controller for smooth transitions
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
     // Load data when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -74,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           slivers: [
             // ✅ YAXSHILANGAN: Modern app bar with gradient
             _buildAppBar(),
-            
+
             // ✅ YAXSHILANGAN: Content with animation
             SliverToBoxAdapter(
               child: FadeTransition(
@@ -85,75 +81,77 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 20),
-                      
+
                       // ✅ Hero Section with animation
                       _buildAnimatedSection(
                         delay: 0,
                         child: const HeroSection(),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // ✅ Categories Section
                       _buildSectionHeader(
                         'Kategoriyalar',
                         'Kerakli toifani tanlang',
                         Icons.grid_view_rounded,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       _buildAnimatedSection(
                         delay: 200,
                         child: Consumer<VehicleProvider>(
                           builder: (context, provider, child) {
-                            if (provider.isLoading && provider.categories.isEmpty) {
+                            if (provider.isLoading &&
+                                provider.categories.isEmpty) {
                               return _buildCategoryShimmer();
                             }
                             return const CategoryList();
                           },
                         ),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // ✅ Featured Vehicles Section
                       _buildSectionHeader(
                         'Tavsiya etilgan mashinalar',
                         'Eng mashhur va ishonchli variantlar',
                         Icons.star_rounded,
                       ),
-                      
+
                       const SizedBox(height: 16),
-                      
+
                       _buildAnimatedSection(
                         delay: 400,
                         child: Consumer<VehicleProvider>(
                           builder: (context, provider, child) {
-                            if (provider.isLoading && provider.featuredVehicles.isEmpty) {
+                            if (provider.isLoading &&
+                                provider.featuredVehicles.isEmpty) {
                               return _buildFeaturedShimmer();
                             }
                             return const FeaturedVehicles();
                           },
                         ),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // ✅ Statistics section (new)
                       _buildAnimatedSection(
                         delay: 600,
                         child: _buildStatisticsSection(),
                       ),
-                      
+
                       const SizedBox(height: 40),
-                      
+
                       // ✅ Quick Contact with animation
                       _buildAnimatedSection(
                         delay: 800,
                         child: const QuickContact(),
                       ),
-                      
+
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -190,12 +188,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Stack(
             children: [
               // Background pattern
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: _PatternPainter(),
-                ),
-              ),
-              
+              Positioned.fill(child: CustomPaint(painter: _PatternPainter())),
+
               // Content
               Padding(
                 padding: const EdgeInsets.only(
@@ -226,9 +220,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         size: 32,
                       ),
                     ),
-                    
+
                     const SizedBox(width: 16),
-                    
+
                     // Title and subtitle
                     Expanded(
                       child: Column(
@@ -256,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    
+
                     // Notification bell
                     Container(
                       padding: const EdgeInsets.all(8),
@@ -281,10 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   // ✅ YANGI: Animated section wrapper
-  Widget _buildAnimatedSection({
-    required int delay,
-    required Widget child,
-  }) {
+  Widget _buildAnimatedSection({required int delay, required Widget child}) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 600 + delay),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -292,10 +283,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       builder: (context, value, child) {
         return Transform.translate(
           offset: Offset(0, 30 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
+          child: Opacity(opacity: value, child: child),
         );
       },
       child: child,
@@ -318,9 +306,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        
+
         const SizedBox(width: 16),
-        
+
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,29 +324,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
             ],
-          ),
-        ),
-        
-        // "Barchasini ko'rish" button
-        TextButton.icon(
-          onPressed: () {
-            // Navigate to full list
-          },
-          icon: Icon(
-            Icons.arrow_forward_ios,
-            size: 16,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          label: Text(
-            'Barchasi',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
       ],
@@ -370,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Consumer<VehicleProvider>(
       builder: (context, provider, child) {
         final stats = provider.statistics;
-        
+
         return Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -392,13 +363,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             children: [
               Text(
                 'Bizning statistika',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               Row(
                 children: [
                   Expanded(
@@ -409,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Colors.blue,
                     ),
                   ),
-                  
+
                   Expanded(
                     child: _buildStatItem(
                       'Kategoriyalar',
@@ -418,7 +389,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       Colors.green,
                     ),
                   ),
-                  
+
                   Expanded(
                     child: _buildStatItem(
                       'Mijozlar',
@@ -436,7 +407,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildStatItem(String label, String value, IconData icon, Color color) {
+  Widget _buildStatItem(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Column(
       children: [
         Container(
@@ -445,15 +421,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(
-            icon,
-            size: 32,
-            color: color,
-          ),
+          child: Icon(icon, size: 32, color: color),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         Text(
           value,
           style: TextStyle(
@@ -462,9 +434,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             color: color,
           ),
         ),
-        
+
         const SizedBox(height: 4),
-        
+
         Text(
           label,
           style: TextStyle(
@@ -490,7 +462,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             margin: const EdgeInsets.only(right: 16),
             child: Shimmer.fromColors(
               baseColor: Theme.of(context).colorScheme.surface,
-              highlightColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              highlightColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withOpacity(0.1),
               child: Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -555,7 +529,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             margin: const EdgeInsets.only(right: 16),
             child: Shimmer.fromColors(
               baseColor: Theme.of(context).colorScheme.surface,
-              highlightColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              highlightColor: Theme.of(
+                context,
+              ).colorScheme.onSurface.withOpacity(0.1),
               child: Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -574,7 +550,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    
+
                     // Content shimmer
                     Padding(
                       padding: const EdgeInsets.all(12),
@@ -645,11 +621,7 @@ class _PatternPainter extends CustomPainter {
     // Draw subtle geometric pattern
     for (int i = 0; i < size.width; i += 40) {
       for (int j = 0; j < size.height; j += 40) {
-        canvas.drawCircle(
-          Offset(i.toDouble(), j.toDouble()),
-          2,
-          paint,
-        );
+        canvas.drawCircle(Offset(i.toDouble(), j.toDouble()), 2, paint);
       }
     }
   }

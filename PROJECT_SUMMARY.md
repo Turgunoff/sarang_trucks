@@ -37,7 +37,6 @@
 - [x] `MainScreen` - bottom navigation bilan asosiy ekran
 - [x] `HomeScreen` - bosh sahifa (hero, kategoriyalar, featured vehicles)
 - [x] `CatalogScreen` - katalog sahifasi (placeholder)
-- [x] `FavoritesScreen` - sevimlilar sahifasi (placeholder)
 - [x] `ContactScreen` - kontakt sahifasi (placeholder)
 
 ### 6. Widgets (UI komponentlari)
@@ -105,7 +104,6 @@
 - Catalog screen
 - Vehicle details
 - Search va filtering
-- Favorites system
 - Contact integration
 
 ## 🛠 Texnik xususiyatlar

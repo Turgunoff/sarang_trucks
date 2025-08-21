@@ -1,10 +1,9 @@
 // lib/screens/vehicle_details_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:provider/provider.dart';
 import '../models/vehicle.dart';
-import '../providers/vehicle_provider.dart';
 import '../constants/app_constants.dart';
+import '../widgets/quick_contact.dart';
 
 class VehicleDetailsScreen extends StatefulWidget {
   final Vehicle vehicle;
@@ -40,7 +39,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header with name and favorite
+                  // Header with name
                   _buildHeader(),
 
                   const SizedBox(height: 24),
@@ -97,30 +96,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       foregroundColor: Colors.white,
       actions: [
-        Consumer<VehicleProvider>(
-          builder: (context, provider, child) {
-            final isFavorite = provider.isFavorite(widget.vehicle.id);
-            return IconButton(
-              onPressed: () {
-                provider.toggleFavorite(widget.vehicle.id);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isFavorite
-                          ? AppConstants.favoriteRemoved
-                          : AppConstants.favoriteAdded,
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.white,
-              ),
-            );
-          },
-        ),
+        // Actions can be added here in the future
       ],
       flexibleSpace: FlexibleSpaceBar(
         background: images.isEmpty

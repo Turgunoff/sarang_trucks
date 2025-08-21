@@ -18,7 +18,6 @@ class AppConstants {
   static const String vehiclesTable = 'vehicles';
 
   // SharedPreferences Keys
-  static const String favoritesKey = 'favorites';
   static const String onboardingKey = 'onboarding_completed';
 
   // Default Values
@@ -31,12 +30,12 @@ class AppConstants {
   static const Duration pageTransitionDuration = Duration(milliseconds: 300);
 
   // Company Information (Static)
-  static const String companyPhone = '+998901234567';
-  static const String companyPhoneSecondary = '+998911234567';
+  static const String companyPhone = '+998933733118';
+  static const String companyPhoneSecondary = '+998933733118';
   static const String companyTelegram = '@sarang_trucks';
-  static const String companyWhatsApp = '+998901234567';
-  static const String companyEmail = 'info@sarangtrucks.uz';
-  static const String companyAddress = 'Toshkent shahar, Yunusobod tumani';
+  static const String companyWhatsApp = '+998933733118';
+  static const String companyEmail = 'arisusarangllc@gmail.com';
+  static const String companyAddress = 'Toshkent shahar, Mirobod tumani';
   static const String companyWorkingHours =
       'Dushanba-Juma: 9:00-18:00, Shanba: 9:00-15:00';
   static const String companyAbout =
@@ -49,6 +48,4 @@ class AppConstants {
 
   // Success Messages
   static const String dataLoaded = 'Ma\'lumotlar yuklandi';
-  static const String favoriteAdded = 'Sevimlilarga qo\'shildi';
-  static const String favoriteRemoved = 'Sevimlilardan olib tashlandi';
 }

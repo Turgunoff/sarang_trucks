@@ -26,21 +26,13 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
     _animationController.forward();
 
@@ -49,11 +41,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkOnboardingAndNavigate() async {
     await Future.delayed(AppConstants.splashDuration);
-    
+
     if (!mounted) return;
 
     final appProvider = context.read<AppProvider>();
-    
+
     if (appProvider.isOnboardingCompleted) {
       _navigateToMain();
     } else {
@@ -64,7 +56,8 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToMain() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const MainScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const MainScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -76,7 +69,8 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToOnboarding() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const OnboardingScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -128,7 +122,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                     const SizedBox(height: 30),
-                    
+
                     // App Name
                     Text(
                       AppConstants.appName,
@@ -139,9 +133,9 @@ class _SplashScreenState extends State<SplashScreen>
                         letterSpacing: 1.2,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Tagline
                     Text(
                       AppConstants.appDescription,
@@ -152,9 +146,9 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    
+
                     const SizedBox(height: 60),
-                    
+
                     // Loading indicator
                     const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

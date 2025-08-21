@@ -6,15 +6,11 @@ import '../models/vehicle.dart';
 class VehicleCard extends StatefulWidget {
   final Vehicle vehicle;
   final VoidCallback? onTap;
-  final VoidCallback? onFavoriteToggle;
-  final bool isFavorite;
 
   const VehicleCard({
     super.key,
     required this.vehicle,
     this.onTap,
-    this.onFavoriteToggle,
-    this.isFavorite = false,
   });
 
   @override
@@ -51,37 +47,15 @@ class _VehicleCardState extends State<VehicleCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title and favorite button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          widget.vehicle.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (widget.onFavoriteToggle != null)
-                        IconButton(
-                          onPressed: widget.onFavoriteToggle,
-                          icon: Icon(
-                            widget.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: widget.isFavorite
-                                ? Colors.red
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
-                          ),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
-                    ],
+                  // Title
+                  Text(
+                    widget.vehicle.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
 
                   const SizedBox(height: 4),

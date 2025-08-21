@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'catalog_screen.dart';
-import 'favorites_screen.dart';
 import 'contact_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -18,7 +17,6 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const CatalogScreen(),
-    const FavoritesScreen(),
     const ContactScreen(),
   ];
 
@@ -62,26 +60,18 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        unselectedItemColor: Theme.of(
+          context,
+        ).colorScheme.onSurface.withOpacity(0.6),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 8,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Bosh sahifa',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Bosh sahifa'),
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_view),
             label: 'Katalog',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Sevimlilar',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.phone),
-            label: 'Kontakt',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.phone), label: 'Kontakt'),
         ],
       ),
       floatingActionButton: FloatingActionButton(
