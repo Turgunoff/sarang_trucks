@@ -31,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       icon: Icons.local_shipping_rounded,
       color: Colors.blue,
       gradient: [Colors.blue, Colors.blue.shade700],
-      features: ['Professional mashinalar', '100+ turi', 'Batafsil ma\'lumot'],
+      features: ['Professional mashinalar', '30+ turi', 'Batafsil ma\'lumot'],
     ),
     OnboardingPage(
       title: 'Eng mos variantni tanlang',
@@ -355,7 +355,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   Widget _buildBottomNavigation() {
     return Container(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
           // Page indicators
@@ -388,7 +388,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ),
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
 
           // Next/Start button
           ScaleTransition(

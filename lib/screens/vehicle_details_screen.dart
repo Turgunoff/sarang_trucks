@@ -1,6 +1,7 @@
 // lib/screens/vehicle_details_screen.dart
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/vehicle.dart';
 import '../constants/app_constants.dart';
 import '../widgets/quick_contact.dart';
@@ -707,33 +708,274 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     );
   }
 
-  void _makePhoneCall() {
-    // URL launcher implementation
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Telefon: ${AppConstants.companyPhone}'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  void _makePhoneCall() async {
+    try {
+      // Telefon raqamini tozalash
+      final cleanNumber = AppConstants.companyPhone.replaceAll(
+        RegExp(r'[^\d+]'),
+        '',
+      );
+
+      // Telefon URL yaratish
+      final Uri phoneUri = Uri(scheme: 'tel', path: cleanNumber);
+
+      debugPrint('🔧 Vehicle Details - Telefon: $phoneUri');
+
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.phone, color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Telefon ochildi',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        cleanNumber,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        throw Exception('Telefon ilovasi ochilmadi');
+      }
+    } catch (e) {
+      debugPrint('❌ Vehicle Details - Telefon xatosi: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Telefon ilovasi ochilmayapti',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
-  void _openTelegram() {
-    // URL launcher implementation
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Telegram: ${AppConstants.companyTelegram}'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  void _openTelegram() async {
+    try {
+      // Telegram username ni tozalash
+      final username = AppConstants.companyTelegram.replaceAll('@', '');
+
+      // Telegram URL'lar
+      final Uri telegramAppUri = Uri.parse('tg://resolve?domain=$username');
+      final Uri telegramWebUri = Uri.parse('https://t.me/$username');
+
+      debugPrint('🔧 Vehicle Details - Telegram: $telegramAppUri');
+
+      // Avval app'ni ochishga harakat qilish
+      bool launched = false;
+      if (await canLaunchUrl(telegramAppUri)) {
+        launched = await launchUrl(
+          telegramAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+
+      // Agar app ochilmasa, web versiyasini ochish
+      if (!launched && await canLaunchUrl(telegramWebUri)) {
+        await launchUrl(telegramWebUri, mode: LaunchMode.externalApplication);
+        launched = true;
+      }
+
+      if (launched) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.telegram, color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Telegram ochildi',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '@$username',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.blue,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        throw Exception('Telegram ochilmadi');
+      }
+    } catch (e) {
+      debugPrint('❌ Vehicle Details - Telegram xatosi: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Telegram ochilmayapti',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
-  void _openWhatsApp() {
-    // URL launcher implementation
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('WhatsApp: ${AppConstants.companyWhatsApp}'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+  void _openWhatsApp() async {
+    try {
+      // WhatsApp raqamini tozalash
+      final cleanNumber = AppConstants.companyWhatsApp.replaceAll(
+        RegExp(r'[^\d]'),
+        '',
+      );
+
+      // WhatsApp URL'lar
+      final Uri whatsAppUri = Uri.parse('whatsapp://send?phone=$cleanNumber');
+      final Uri whatsAppWebUri = Uri.parse('https://wa.me/$cleanNumber');
+
+      debugPrint('🔧 Vehicle Details - WhatsApp: $whatsAppUri');
+
+      // Avval app'ni ochishga harakat qilish
+      bool launched = false;
+      if (await canLaunchUrl(whatsAppUri)) {
+        launched = await launchUrl(
+          whatsAppUri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+
+      // Agar app ochilmasa, web versiyasini ochish
+      if (!launched && await canLaunchUrl(whatsAppWebUri)) {
+        await launchUrl(whatsAppWebUri, mode: LaunchMode.externalApplication);
+        launched = true;
+      }
+
+      if (launched) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.chat, color: Colors.white, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'WhatsApp ochildi',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '+$cleanNumber',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      } else {
+        throw Exception('WhatsApp ochilmadi');
+      }
+    } catch (e) {
+      debugPrint('❌ Vehicle Details - WhatsApp xatosi: $e');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white, size: 20),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'WhatsApp ochilmayapti',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

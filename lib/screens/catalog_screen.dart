@@ -593,19 +593,7 @@ class _CatalogScreenState extends State<CatalogScreen>
             ),
           );
         }
-        if (vehicleProvider.error == null) {
-          return Center(
-            child: Text(
-              "Mashinalarni yuklashda xatolik bo'ldi",
-              style: TextStyle(
-                color: colorScheme.error,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          );
-        }
+
         if (vehicleProvider.error != null) {
           return Container(
             height: 400,

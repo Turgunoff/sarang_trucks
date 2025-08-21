@@ -1,4 +1,4 @@
-// lib/screens/contact_screen.dart
+// lib/screens/contact_screen.dart - TUZATILGAN URL LAUNCHER BILAN
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -221,7 +221,6 @@ class _ContactScreenState extends State<ContactScreen>
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.elasticOut,
       builder: (context, value, child) {
-        // Scale qiymatini musbat qilib saqlash
         final safeScale = value.clamp(0.0, 2.0);
         return Transform.scale(
           scale: safeScale,
@@ -420,19 +419,12 @@ class _ContactScreenState extends State<ContactScreen>
         'color': Colors.green,
         'action': () => _makePhoneCall(AppConstants.companyPhone),
       },
-      {
-        'icon': Icons.phone_android_rounded,
-        'title': 'Qo\'shimcha raqam',
-        'subtitle': 'Rezerv aloqa',
-        'value': AppConstants.companyPhoneSecondary,
-        'color': Colors.blue,
-        'action': () => _makePhoneCall(AppConstants.companyPhoneSecondary),
-      },
+
       {
         'icon': Icons.telegram,
         'title': 'Telegram',
         'subtitle': 'Tezkor xabar almashuv',
-        'value': AppConstants.companyTelegram,
+        'value': '@${AppConstants.companyTelegram}',
         'color': Colors.blue,
         'action': () => _openTelegram(),
       },
@@ -467,7 +459,6 @@ class _ContactScreenState extends State<ContactScreen>
             tween: Tween(begin: 0.0, end: 1.0),
             curve: Curves.easeOutBack,
             builder: (context, value, child) {
-              // Opacity qiymatini 0.0-1.0 orasida saqlash
               final safeOpacity = value.clamp(0.0, 1.0);
               return Transform.translate(
                 offset: Offset(30 * (1 - safeOpacity), 0),
@@ -885,62 +876,99 @@ class _ContactScreenState extends State<ContactScreen>
     );
   }
 
-  // Action methods
-  void _makePhoneCall(String phoneNumber) async {
-    HapticFeedback.lightImpact();
+  // 🔧 TUZATILGAN ACTION METHODS
 
-    // Create the phone URL
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-
+  /// Telefon qo'ng'iroq qilish
+  Future<void> _makePhoneCall(String phoneNumber) async {
     try {
-      // Check if the device can launch the URL
+      // Haptic feedback
+      HapticFeedback.lightImpact();
+
+      // Telefon raqamini tozalash (faqat raqamlar qoldirish)
+      final cleanNumber = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+      // Telefon URL yaratish
+      final Uri phoneUri = Uri(scheme: 'tel', path: cleanNumber);
+
+      debugPrint('🔧 Telefon qo\'ng\'iroq: $phoneUri');
+
+      // URL ochish mumkinligini tekshirish
       if (await canLaunchUrl(phoneUri)) {
-        // Launch the phone call
         await launchUrl(phoneUri);
-      } else {
-        // Show error if phone call cannot be launched
+
+        // Muvaffaqiyatli feedback
         _showContactFeedback(
-          icon: Icons.error_outline,
-          title: 'Xatolik',
-          subtitle: 'Telefon qo\'ng\'iroq ochilmayapti',
-          color: Colors.red,
+          icon: Icons.phone,
+          title: 'Telefon ochildi',
+          subtitle: cleanNumber,
+          color: Colors.green,
         );
+      } else {
+        throw Exception('Telefon ilovasi ochilmadi');
       }
     } catch (e) {
-      // Show error if there's an exception
+      debugPrint('❌ Telefon qo\'ng\'iroq xatosi: $e');
+
+      // Xato feedback
       _showContactFeedback(
         icon: Icons.error_outline,
         title: 'Xatolik',
-        subtitle: 'Telefon qo\'ng\'iroq ochilmayapti',
+        subtitle: 'Telefon ilovasi ochilmayapti',
         color: Colors.red,
       );
     }
   }
 
-  void _openTelegram() async {
-    HapticFeedback.lightImpact();
-
-    // Create the Telegram URL
-    final Uri telegramUri = Uri.parse(
-      'https://t.me/${AppConstants.companyTelegram.replaceAll('@', '')}',
-    );
-
+  /// Telegram ochish
+  Future<void> _openTelegram() async {
     try {
-      // Check if the device can launch the URL
-      if (await canLaunchUrl(telegramUri)) {
-        // Launch Telegram
-        await launchUrl(telegramUri, mode: LaunchMode.externalApplication);
-      } else {
-        // Show error if Telegram cannot be launched
-        _showContactFeedback(
-          icon: Icons.error_outline,
-          title: 'Xatolik',
-          subtitle: 'Telegram ochilmayapti',
-          color: Colors.red,
+      // Haptic feedback
+      HapticFeedback.lightImpact();
+
+      // Telegram username ni tozalash (@ belgisini olib tashlash)
+      final username = AppConstants.companyTelegram.replaceAll('@', '');
+
+      // Telegram URL yaratish - app va web variantlari
+      final Uri telegramAppUri = Uri.parse('tg://resolve?domain=$username');
+      final Uri telegramWebUri = Uri.parse('https://t.me/$username');
+
+      debugPrint('🔧 Telegram ochish: $telegramAppUri');
+
+      // Avval Telegram app'ni ochishga harakat qilish
+      bool launched = false;
+      if (await canLaunchUrl(telegramAppUri)) {
+        launched = await launchUrl(
+          telegramAppUri,
+          mode: LaunchMode.externalApplication,
         );
       }
+
+      // Agar app ochilmasa, web versiyasini ochish
+      if (!launched) {
+        debugPrint(
+          '🔧 Telegram app ochilmadi, web versiyasini ochish: $telegramWebUri',
+        );
+        if (await canLaunchUrl(telegramWebUri)) {
+          await launchUrl(telegramWebUri, mode: LaunchMode.externalApplication);
+          launched = true;
+        }
+      }
+
+      if (launched) {
+        // Muvaffaqiyatli feedback
+        _showContactFeedback(
+          icon: Icons.telegram,
+          title: 'Telegram ochildi',
+          subtitle: '@$username',
+          color: Colors.blue,
+        );
+      } else {
+        throw Exception('Telegram ochilmadi');
+      }
     } catch (e) {
-      // Show error if there's an exception
+      debugPrint('❌ Telegram ochish xatosi: $e');
+
+      // Xato feedback
       _showContactFeedback(
         icon: Icons.error_outline,
         title: 'Xatolik',
@@ -950,30 +978,59 @@ class _ContactScreenState extends State<ContactScreen>
     }
   }
 
-  void _openWhatsApp() async {
-    HapticFeedback.lightImpact();
-
-    // Create the WhatsApp URL
-    final Uri whatsappUri = Uri.parse(
-      'https://wa.me/${AppConstants.companyWhatsApp.replaceAll(RegExp(r'[^\d]'), '')}',
-    );
-
+  /// WhatsApp ochish
+  Future<void> _openWhatsApp() async {
     try {
-      // Check if the device can launch the URL
-      if (await canLaunchUrl(whatsappUri)) {
-        // Launch WhatsApp
-        await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
-      } else {
-        // Show error if WhatsApp cannot be launched
-        _showContactFeedback(
-          icon: Icons.error_outline,
-          title: 'Xatolik',
-          subtitle: 'WhatsApp ochilmayapti',
-          color: Colors.red,
+      // Haptic feedback
+      HapticFeedback.lightImpact();
+
+      // WhatsApp raqamini tozalash (faqat raqamlar qoldirish)
+      final cleanNumber = AppConstants.companyWhatsApp.replaceAll(
+        RegExp(r'[^\d]'),
+        '',
+      );
+
+      // WhatsApp URL yaratish - app va web variantlari
+      final Uri whatsAppUri = Uri.parse('whatsapp://send?phone=$cleanNumber');
+      final Uri whatsAppWebUri = Uri.parse('https://wa.me/$cleanNumber');
+
+      debugPrint('🔧 WhatsApp ochish: $whatsAppUri');
+
+      // Avval WhatsApp app'ni ochishga harakat qilish
+      bool launched = false;
+      if (await canLaunchUrl(whatsAppUri)) {
+        launched = await launchUrl(
+          whatsAppUri,
+          mode: LaunchMode.externalApplication,
         );
       }
+
+      // Agar app ochilmasa, web versiyasini ochish
+      if (!launched) {
+        debugPrint(
+          '🔧 WhatsApp app ochilmadi, web versiyasini ochish: $whatsAppWebUri',
+        );
+        if (await canLaunchUrl(whatsAppWebUri)) {
+          await launchUrl(whatsAppWebUri, mode: LaunchMode.externalApplication);
+          launched = true;
+        }
+      }
+
+      if (launched) {
+        // Muvaffaqiyatli feedback
+        _showContactFeedback(
+          icon: Icons.chat,
+          title: 'WhatsApp ochildi',
+          subtitle: '+$cleanNumber',
+          color: Colors.green,
+        );
+      } else {
+        throw Exception('WhatsApp ochilmadi');
+      }
     } catch (e) {
-      // Show error if there's an exception
+      debugPrint('❌ WhatsApp ochish xatosi: $e');
+
+      // Xato feedback
       _showContactFeedback(
         icon: Icons.error_outline,
         title: 'Xatolik',
@@ -983,48 +1040,82 @@ class _ContactScreenState extends State<ContactScreen>
     }
   }
 
-  void _sendEmail() async {
-    HapticFeedback.lightImpact();
-
-    // Create the email URL
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: AppConstants.companyEmail,
-      query:
-          'subject=Sarang Trucks - Murojaat&body=Salom! Men Sarang Trucks xizmatlari haqida ma\'lumot olmoqchiman.',
-    );
-
+  /// Email yuborish
+  Future<void> _sendEmail() async {
     try {
-      // Check if the device can launch the URL
+      // Haptic feedback
+      HapticFeedback.lightImpact();
+
+      // Email URI yaratish
+      final Uri emailUri = Uri(
+        scheme: 'mailto',
+        path: AppConstants.companyEmail,
+        query: _buildEmailQuery(),
+      );
+
+      debugPrint('🔧 Email yuborish: $emailUri');
+
+      // Email ilovasini ochish
       if (await canLaunchUrl(emailUri)) {
-        // Launch email app
         await launchUrl(emailUri);
-      } else {
-        // Show error if email cannot be launched
+
+        // Muvaffaqiyatli feedback
         _showContactFeedback(
-          icon: Icons.error_outline,
-          title: 'Xatolik',
-          subtitle: 'Email ochilmayapti',
-          color: Colors.red,
+          icon: Icons.email,
+          title: 'Email ilovasi ochildi',
+          subtitle: AppConstants.companyEmail,
+          color: Colors.orange,
         );
+      } else {
+        throw Exception('Email ilovasi ochilmadi');
       }
     } catch (e) {
-      // Show error if there's an exception
+      debugPrint('❌ Email yuborish xatosi: $e');
+
+      // Xato feedback
       _showContactFeedback(
         icon: Icons.error_outline,
         title: 'Xatolik',
-        subtitle: 'Email ochilmayapti',
+        subtitle: 'Email ilovasi ochilmayapti',
         color: Colors.red,
       );
     }
   }
 
+  /// Email query parametrlarini yaratish
+  String _buildEmailQuery() {
+    final Map<String, String> queryParams = {
+      'subject': 'Sarang Trucks - Murojaat',
+      'body': '''Salom!
+
+Men Sarang Trucks xizmatlari haqida ma'lumot olmoqchiman.
+
+Iltimos, menga quyidagi mavzularda yordam bering:
+- Mavjud yuk mashinalari ro'yxati
+- Narxlar va shartlar
+- Ijara muddati
+- Qo'shimcha xizmatlar
+
+Rahmat!''',
+    };
+
+    return queryParams.entries
+        .map(
+          (e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
+        .join('&');
+  }
+
+  /// Feedback ko'rsatish
   void _showContactFeedback({
     required IconData icon,
     required String title,
     required String subtitle,
     required Color color,
   }) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -1050,13 +1141,16 @@ class _ContactScreenState extends State<ContactScreen>
                       fontSize: 14,
                     ),
                   ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withOpacity(0.9),
+                  if (subtitle.isNotEmpty)
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.9),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
                 ],
               ),
             ),
@@ -1065,7 +1159,8 @@ class _ContactScreenState extends State<ContactScreen>
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }

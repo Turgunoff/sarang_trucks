@@ -2,8 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/connectivity_provider.dart';
+import '../providers/app_provider.dart';
 import '../screens/splash_screen.dart';
 import '../screens/no_internet_screen.dart';
+import '../screens/onboarding_screen.dart';
+import '../screens/main_screen.dart';
 
 class AppWrapper extends StatefulWidget {
   const AppWrapper({super.key});
@@ -14,7 +17,7 @@ class AppWrapper extends StatefulWidget {
 
 class _AppWrapperState extends State<AppWrapper> {
   bool _hasShownSplash = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ConnectivityProvider>(
@@ -35,8 +38,16 @@ class _AppWrapperState extends State<AppWrapper> {
           return const NoInternetScreen();
         }
 
-        // Show main app
-        return const SplashScreen(); // This will navigate to onboarding/main based on settings
+        // Show main app based on onboarding status
+        return Consumer<AppProvider>(
+          builder: (context, appProvider, child) {
+            if (appProvider.isOnboardingCompleted) {
+              return const MainScreen();
+            } else {
+              return const OnboardingScreen();
+            }
+          },
+        );
       },
     );
   }
@@ -51,10 +62,12 @@ class SplashScreenWithConnectivity extends StatefulWidget {
   });
 
   @override
-  State<SplashScreenWithConnectivity> createState() => _SplashScreenWithConnectivityState();
+  State<SplashScreenWithConnectivity> createState() =>
+      _SplashScreenWithConnectivityState();
 }
 
-class _SplashScreenWithConnectivityState extends State<SplashScreenWithConnectivity>
+class _SplashScreenWithConnectivityState
+    extends State<SplashScreenWithConnectivity>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -169,7 +182,9 @@ class _SplashScreenWithConnectivityState extends State<SplashScreenWithConnectiv
                           return Column(
                             children: [
                               const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                                 strokeWidth: 3,
                               ),
                               const SizedBox(height: 16),
@@ -208,7 +223,9 @@ class _SplashScreenWithConnectivityState extends State<SplashScreenWithConnectiv
                               ),
                               const SizedBox(height: 8),
                               const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                                 strokeWidth: 3,
                               ),
                             ],
