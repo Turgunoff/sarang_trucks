@@ -1,3 +1,4 @@
+// lib/widgets/hero_section.dart
 import 'package:flutter/material.dart';
 
 class HeroSection extends StatelessWidget {
@@ -37,7 +38,9 @@ class HeroSection extends StatelessWidget {
           Text(
             'Ishonchli xizmat, qulay narxlar',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
+              color: Theme.of(
+                context,
+              ).colorScheme.onBackground.withOpacity(0.7),
             ),
           ),
           const SizedBox(height: 24),
@@ -45,8 +48,8 @@ class HeroSection extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Navigate to catalog
-                // This will be implemented later
+                // Catalog tab-ga o'tish uchun
+                _navigateToCatalog(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
@@ -58,15 +61,31 @@ class HeroSection extends StatelessWidget {
               ),
               child: const Text(
                 'Katalogni ko\'rish',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _navigateToCatalog(BuildContext context) {
+    // MainScreen state-ni topib, catalog tab-ga o'tish
+    // Hozircha oddiy snackbar ko'rsatamiz
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Katalog sahifasiga o\'tish...'),
+        duration: Duration(seconds: 1),
+      ),
+    );
+
+    // Alternatif: Agar MainScreen-da method mavjud bo'lsa
+    // try {
+    //   final mainScreenState = context.findAncestorStateOfType<_MainScreenState>();
+    //   mainScreenState?.onTabTapped(1); // Catalog tab index
+    // } catch (e) {
+    //   // Fallback
+    // }
   }
 }

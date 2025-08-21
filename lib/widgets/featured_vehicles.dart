@@ -1,7 +1,9 @@
+// lib/widgets/featured_vehicles.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/vehicle.dart';
+import '../screens/vehicle_details_screen.dart';
 
 class FeaturedVehicles extends StatelessWidget {
   const FeaturedVehicles({super.key});
@@ -41,13 +43,11 @@ class FeaturedVehicles extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: InkWell(
           onTap: () {
-            // Navigate to vehicle details
-            // This will be implemented later
+            // Vehicle details sahifasiga o'tish
+            _navigateToVehicleDetails(context, vehicle);
           },
           borderRadius: BorderRadius.circular(12),
           child: Column(
@@ -70,7 +70,7 @@ class FeaturedVehicles extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Vehicle info
               Padding(
                 padding: const EdgeInsets.all(12),
@@ -91,7 +91,9 @@ class FeaturedVehicles extends StatelessWidget {
                       vehicle.model,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -123,6 +125,14 @@ class FeaturedVehicles extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _navigateToVehicleDetails(BuildContext context, Vehicle vehicle) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => VehicleDetailsScreen(vehicle: vehicle),
       ),
     );
   }

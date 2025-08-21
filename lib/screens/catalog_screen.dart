@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../widgets/vehicle_card.dart';
 import '../models/vehicle.dart';
+import 'vehicle_details_screen.dart';
 
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
@@ -360,12 +361,9 @@ class _CatalogScreenState extends State<CatalogScreen> {
   }
 
   void _navigateToVehicleDetails(Vehicle vehicle) {
-    // Navigate to vehicle details screen
-    // This will be implemented later
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${vehicle.name} batafsil ma\'lumotlari'),
-        duration: const Duration(seconds: 1),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => VehicleDetailsScreen(vehicle: vehicle),
       ),
     );
   }
