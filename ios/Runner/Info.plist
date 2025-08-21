@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhoneUsageDescription</key>
+	<string>Bu ilova mijozlar bilan bog'lanish uchun telefon qo'ng'iroqlarini amalga oshirish imkoniyatini talab qiladi.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>telegram</string>
+		<string>whatsapp</string>
+		<string>mailto</string>
+		<string>tel</string>
+	</array>
 </dict>
 </plist>

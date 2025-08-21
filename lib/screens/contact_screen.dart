@@ -1,6 +1,7 @@
 // lib/screens/contact_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_constants.dart';
 
 class ContactScreen extends StatefulWidget {
@@ -885,48 +886,137 @@ class _ContactScreenState extends State<ContactScreen>
   }
 
   // Action methods
-  void _makePhoneCall(String phoneNumber) {
+  void _makePhoneCall(String phoneNumber) async {
     HapticFeedback.lightImpact();
-    _showContactFeedback(
-      icon: Icons.phone_rounded,
-      title: 'Telefon qo\'ng\'iroq',
-      subtitle: phoneNumber,
-      color: Colors.green,
-    );
-    // TODO: Implement URL launcher for tel:
+
+    // Create the phone URL
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    try {
+      // Check if the device can launch the URL
+      if (await canLaunchUrl(phoneUri)) {
+        // Launch the phone call
+        await launchUrl(phoneUri);
+      } else {
+        // Show error if phone call cannot be launched
+        _showContactFeedback(
+          icon: Icons.error_outline,
+          title: 'Xatolik',
+          subtitle: 'Telefon qo\'ng\'iroq ochilmayapti',
+          color: Colors.red,
+        );
+      }
+    } catch (e) {
+      // Show error if there's an exception
+      _showContactFeedback(
+        icon: Icons.error_outline,
+        title: 'Xatolik',
+        subtitle: 'Telefon qo\'ng\'iroq ochilmayapti',
+        color: Colors.red,
+      );
+    }
   }
 
-  void _openTelegram() {
+  void _openTelegram() async {
     HapticFeedback.lightImpact();
-    _showContactFeedback(
-      icon: Icons.telegram,
-      title: 'Telegram ochilmoqda',
-      subtitle: AppConstants.companyTelegram,
-      color: Colors.blue,
+
+    // Create the Telegram URL
+    final Uri telegramUri = Uri.parse(
+      'https://t.me/${AppConstants.companyTelegram.replaceAll('@', '')}',
     );
-    // TODO: Implement URL launcher for telegram
+
+    try {
+      // Check if the device can launch the URL
+      if (await canLaunchUrl(telegramUri)) {
+        // Launch Telegram
+        await launchUrl(telegramUri, mode: LaunchMode.externalApplication);
+      } else {
+        // Show error if Telegram cannot be launched
+        _showContactFeedback(
+          icon: Icons.error_outline,
+          title: 'Xatolik',
+          subtitle: 'Telegram ochilmayapti',
+          color: Colors.red,
+        );
+      }
+    } catch (e) {
+      // Show error if there's an exception
+      _showContactFeedback(
+        icon: Icons.error_outline,
+        title: 'Xatolik',
+        subtitle: 'Telegram ochilmayapti',
+        color: Colors.red,
+      );
+    }
   }
 
-  void _openWhatsApp() {
+  void _openWhatsApp() async {
     HapticFeedback.lightImpact();
-    _showContactFeedback(
-      icon: Icons.chat_rounded,
-      title: 'WhatsApp ochilmoqda',
-      subtitle: AppConstants.companyWhatsApp,
-      color: Colors.green,
+
+    // Create the WhatsApp URL
+    final Uri whatsappUri = Uri.parse(
+      'https://wa.me/${AppConstants.companyWhatsApp.replaceAll(RegExp(r'[^\d]'), '')}',
     );
-    // TODO: Implement URL launcher for whatsapp
+
+    try {
+      // Check if the device can launch the URL
+      if (await canLaunchUrl(whatsappUri)) {
+        // Launch WhatsApp
+        await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
+      } else {
+        // Show error if WhatsApp cannot be launched
+        _showContactFeedback(
+          icon: Icons.error_outline,
+          title: 'Xatolik',
+          subtitle: 'WhatsApp ochilmayapti',
+          color: Colors.red,
+        );
+      }
+    } catch (e) {
+      // Show error if there's an exception
+      _showContactFeedback(
+        icon: Icons.error_outline,
+        title: 'Xatolik',
+        subtitle: 'WhatsApp ochilmayapti',
+        color: Colors.red,
+      );
+    }
   }
 
-  void _sendEmail() {
+  void _sendEmail() async {
     HapticFeedback.lightImpact();
-    _showContactFeedback(
-      icon: Icons.email_rounded,
-      title: 'Email ochilmoqda',
-      subtitle: AppConstants.companyEmail,
-      color: Colors.orange,
+
+    // Create the email URL
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: AppConstants.companyEmail,
+      query:
+          'subject=Sarang Trucks - Murojaat&body=Salom! Men Sarang Trucks xizmatlari haqida ma\'lumot olmoqchiman.',
     );
-    // TODO: Implement URL launcher for mailto
+
+    try {
+      // Check if the device can launch the URL
+      if (await canLaunchUrl(emailUri)) {
+        // Launch email app
+        await launchUrl(emailUri);
+      } else {
+        // Show error if email cannot be launched
+        _showContactFeedback(
+          icon: Icons.error_outline,
+          title: 'Xatolik',
+          subtitle: 'Email ochilmayapti',
+          color: Colors.red,
+        );
+      }
+    } catch (e) {
+      // Show error if there's an exception
+      _showContactFeedback(
+        icon: Icons.error_outline,
+        title: 'Xatolik',
+        subtitle: 'Email ochilmayapti',
+        color: Colors.red,
+      );
+    }
   }
 
   void _showContactFeedback({

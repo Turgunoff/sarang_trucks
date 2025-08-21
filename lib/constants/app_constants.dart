@@ -32,7 +32,7 @@ class AppConstants {
   // Company Information (Static)
   static const String companyPhone = '+998933733118';
   static const String companyPhoneSecondary = '+998933733118';
-  static const String companyTelegram = '@sarang_trucks';
+  static const String companyTelegram = 'sarang_trucks';
   static const String companyWhatsApp = '+998933733118';
   static const String companyEmail = 'arisusarangllc@gmail.com';
   static const String companyAddress = 'Toshkent shahar, Mirobod tumani';
