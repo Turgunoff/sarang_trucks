@@ -205,7 +205,7 @@ class _HeroSectionState extends State<HeroSection>
                                 color: Colors.green,
                               ),
 
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 4),
 
                               _buildFeature(
                                 context,
@@ -214,7 +214,7 @@ class _HeroSectionState extends State<HeroSection>
                                 color: Colors.blue,
                               ),
 
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 4),
 
                               _buildFeature(
                                 context,
@@ -231,7 +231,7 @@ class _HeroSectionState extends State<HeroSection>
                           Row(
                             children: [
                               Expanded(
-                                flex: 2,
+                                flex: 3,
                                 child: _buildPrimaryButton(context),
                               ),
 

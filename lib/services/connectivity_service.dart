@@ -1,4 +1,4 @@
-// lib/services/connectivity_service.dart
+// lib/services/connectivity_service.dart - TUZATILGAN VERSIYA
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -11,10 +11,11 @@ class ConnectivityService {
 
   final Connectivity _connectivity = Connectivity();
   final InternetConnectionChecker _internetChecker =
-      InternetConnectionChecker();
+      InternetConnectionChecker.createInstance();
 
   StreamController<bool>? _connectionStatusController;
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  StreamSubscription<List<ConnectivityResult>>?
+  _connectivitySubscription; // 🔧 TUZATILDI
   StreamSubscription<InternetConnectionStatus>? _internetSubscription;
 
   bool _hasConnection = true;
@@ -30,30 +31,47 @@ class ConnectivityService {
   Future<void> initialize() async {
     debugPrint('🌐 ConnectivityService: Initializing...');
 
-    // Check initial connection
-    await checkConnection();
+    try {
+      // Check initial connection
+      await checkConnection();
 
-    // Listen to connectivity changes
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
-      _onConnectivityChanged,
-    );
+      // Listen to connectivity changes
+      _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+        _onConnectivityChanged,
+        onError: (error) {
+          debugPrint(
+            '🌐 ConnectivityService: Connectivity stream error: $error',
+          );
+        },
+      );
 
-    // Listen to internet connection status
-    _internetSubscription = _internetChecker.onStatusChange.listen(
-      _onInternetStatusChanged,
-    );
+      // Listen to internet connection status
+      _internetSubscription = _internetChecker.onStatusChange.listen(
+        _onInternetStatusChanged,
+        onError: (error) {
+          debugPrint(
+            '🌐 ConnectivityService: Internet checker stream error: $error',
+          );
+        },
+      );
 
-    debugPrint(
-      '🌐 ConnectivityService: Initialized with connection: $_hasConnection',
-    );
+      debugPrint(
+        '🌐 ConnectivityService: Initialized with connection: $_hasConnection',
+      );
+    } catch (e) {
+      debugPrint('🌐 ConnectivityService: Initialization error: $e');
+      _hasConnection = false;
+    }
   }
 
   // Check current connection status
   Future<bool> checkConnection() async {
     try {
-      final connectivityResult = await _connectivity.checkConnectivity();
+      final connectivityResults = await _connectivity
+          .checkConnectivity(); // 🔧 TUZATILDI
 
-      if (connectivityResult == ConnectivityResult.none) {
+      // 🔧 TUZATILDI: List<ConnectivityResult> ni tekshirish
+      if (connectivityResults.contains(ConnectivityResult.none)) {
         _updateConnectionStatus(false);
         return false;
       }
@@ -69,11 +87,11 @@ class ConnectivityService {
     }
   }
 
-  // Handle connectivity changes
-  void _onConnectivityChanged(ConnectivityResult result) {
-    debugPrint('🌐 ConnectivityService: Connectivity changed to $result');
+  // 🔧 TUZATILDI: Handle connectivity changes
+  void _onConnectivityChanged(List<ConnectivityResult> results) {
+    debugPrint('🌐 ConnectivityService: Connectivity changed to $results');
 
-    if (result == ConnectivityResult.none) {
+    if (results.contains(ConnectivityResult.none)) {
       _updateConnectionStatus(false);
     } else {
       // When connectivity is restored, double-check internet access
@@ -124,26 +142,25 @@ class ConnectivityService {
     }
   }
 
-  // Get connection type
+  // 🔧 TUZATILDI: Get connection type
   Future<String> getConnectionType() async {
     try {
-      final connectivityResult = await _connectivity.checkConnectivity();
-      switch (connectivityResult) {
-        case ConnectivityResult.wifi:
-          return 'WiFi';
-        case ConnectivityResult.mobile:
-          return 'Mobile Data';
-        case ConnectivityResult.ethernet:
-          return 'Ethernet';
-        case ConnectivityResult.bluetooth:
-          return 'Bluetooth';
-        case ConnectivityResult.vpn:
-          return 'VPN';
-        case ConnectivityResult.other:
-          return 'Other';
-        case ConnectivityResult.none:
-        default:
-          return 'No Connection';
+      final connectivityResults = await _connectivity.checkConnectivity();
+
+      if (connectivityResults.contains(ConnectivityResult.wifi)) {
+        return 'WiFi';
+      } else if (connectivityResults.contains(ConnectivityResult.mobile)) {
+        return 'Mobile Data';
+      } else if (connectivityResults.contains(ConnectivityResult.ethernet)) {
+        return 'Ethernet';
+      } else if (connectivityResults.contains(ConnectivityResult.bluetooth)) {
+        return 'Bluetooth';
+      } else if (connectivityResults.contains(ConnectivityResult.vpn)) {
+        return 'VPN';
+      } else if (connectivityResults.contains(ConnectivityResult.other)) {
+        return 'Other';
+      } else {
+        return 'No Connection';
       }
     } catch (e) {
       debugPrint('🌐 ConnectivityService: Error getting connection type: $e');
