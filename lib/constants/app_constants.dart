@@ -7,7 +7,8 @@ class AppConstants {
 
   // Supabase Configuration
   static const String supabaseUrl = 'https://rlqvwuylaphnfdlxspkn.supabase.co';
-  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscXZ3dXlsYXBobmZkbHhzcGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NDg3NTAsImV4cCI6MjA3MTMyNDc1MH0.1DIztj64kMERBkmxSYTIpeJahLmYim1A5O2NLY9I1H0';
+  static const String supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscXZ3dXlsYXBobmZkbHhzcGtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3NDg3NTAsImV4cCI6MjA3MTMyNDc1MH0.1DIztj64kMERBkmxSYTIpeJahLmYim1A5O2NLY9I1H0';
 
   // Storage Buckets
   static const String vehicleImagesBucket = 'vehicle-images';
@@ -15,8 +16,6 @@ class AppConstants {
   // API Endpoints
   static const String categoriesTable = 'categories';
   static const String vehiclesTable = 'vehicles';
-  static const String vehicleImagesTable = 'vehicle_images';
-  static const String companyInfoTable = 'company_info';
 
   // SharedPreferences Keys
   static const String favoritesKey = 'favorites';
@@ -31,11 +30,17 @@ class AppConstants {
   static const Duration splashDuration = Duration(seconds: 3);
   static const Duration pageTransitionDuration = Duration(milliseconds: 300);
 
-  // Contact Information (Fallback)
-  static const String fallbackPhone = '+998901234567';
-  static const String fallbackTelegram = '@sarang_trucks';
-  static const String fallbackWhatsApp = '+998901234567';
-  static const String fallbackEmail = 'info@sarangtrucks.uz';
+  // Company Information (Static)
+  static const String companyPhone = '+998901234567';
+  static const String companyPhoneSecondary = '+998911234567';
+  static const String companyTelegram = '@sarang_trucks';
+  static const String companyWhatsApp = '+998901234567';
+  static const String companyEmail = 'info@sarangtrucks.uz';
+  static const String companyAddress = 'Toshkent shahar, Yunusobod tumani';
+  static const String companyWorkingHours =
+      'Dushanba-Juma: 9:00-18:00, Shanba: 9:00-15:00';
+  static const String companyAbout =
+      'Arisu Sarang MCHJ - yuk mashinalari ijarasi bo\'yicha ishonchli hamkor. 5 yildan ortiq tajriba.';
 
   // Error Messages
   static const String networkError = 'Internet aloqasi yo\'q';

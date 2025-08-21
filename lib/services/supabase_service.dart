@@ -1,3 +1,4 @@
+// lib/services/supabase_service.dart
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/category.dart';
 import '../models/vehicle.dart';
@@ -25,7 +26,7 @@ class SupabaseService {
     }
   }
 
-  // Vehicles - simplified for now
+  // Vehicles - categories bilan join qilingan
   static Future<List<Vehicle>> getVehicles({
     String? categoryId,
     double? minCapacity,
@@ -36,11 +37,14 @@ class SupabaseService {
     int offset = 0,
   }) async {
     try {
-      // For now, just get all vehicles and filter in memory
-      // This can be optimized later with proper Supabase queries
+      // Categories bilan join query - BU MUHIM!
       final response = await _client
           .from(AppConstants.vehiclesTable)
-          .select()
+          .select('''
+            *,
+            categories!inner(*)
+          ''')
+          .eq('is_available', true)
           .order('created_at', ascending: false);
 
       if (response != null) {
@@ -65,11 +69,21 @@ class SupabaseService {
         if (isFeatured != null) {
           vehicles = vehicles.where((v) => v.isFeatured == isFeatured).toList();
         }
+        if (searchQuery != null && searchQuery.isNotEmpty) {
+          vehicles = vehicles
+              .where(
+                (v) =>
+                    v.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                    v.model.toLowerCase().contains(searchQuery.toLowerCase()),
+              )
+              .toList();
+        }
 
-        return vehicles.take(limit).toList();
+        return vehicles.skip(offset).take(limit).toList();
       }
       return [];
     } catch (e) {
+      print('Supabase xatoligi: $e'); // Debug uchun
       throw Exception('Mashinalarni yuklashda xatolik: $e');
     }
   }
@@ -78,7 +92,10 @@ class SupabaseService {
     try {
       final response = await _client
           .from(AppConstants.vehiclesTable)
-          .select()
+          .select('''
+            *,
+            categories!inner(*)
+          ''')
           .eq('id', vehicleId)
           .single();
 
@@ -95,53 +112,19 @@ class SupabaseService {
     return getVehicles(isFeatured: true, limit: limit);
   }
 
-  // Search - simplified
+  // Search - categories bilan
   static Future<List<Vehicle>> searchVehicles(String query) async {
-    try {
-      final response = await _client
-          .from(AppConstants.vehiclesTable)
-          .select()
-          .eq('is_available', true);
-
-      if (response != null) {
-        List<Vehicle> vehicles = (response as List)
-            .map((json) => Vehicle.fromJson(json))
-            .toList();
-
-        // Filter by search query
-        vehicles = vehicles
-            .where(
-              (v) =>
-                  v.name.toLowerCase().contains(query.toLowerCase()) ||
-                  v.model.toLowerCase().contains(query.toLowerCase()),
-            )
-            .toList();
-
-        return vehicles.take(AppConstants.defaultPageSize).toList();
-      }
-      return [];
-    } catch (e) {
-      throw Exception('Qidiruvda xatolik: $e');
-    }
+    return getVehicles(searchQuery: query);
   }
 
   // Storage
   static String getImageUrl(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return imagePath; // Already a full URL
+    }
     return _client.storage
         .from(AppConstants.vehicleImagesBucket)
         .getPublicUrl(imagePath);
-  }
-
-  // Real-time subscriptions (simplified for now)
-  static RealtimeChannel subscribeToVehicles({
-    required Function(List<Vehicle>) onData,
-    required Function(String) onError,
-  }) {
-    return _client.channel('vehicles').subscribe((status, [error]) {
-      if (error != null) {
-        onError(error.toString());
-      }
-    });
   }
 
   // Error handling

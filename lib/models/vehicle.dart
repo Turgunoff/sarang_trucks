@@ -51,13 +51,10 @@ class Vehicle {
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
-    // Rasmlarni 5 ta ustundan yig'ish
+    // Rasmlar JSON array'dan olish
     List<String> imageList = [];
-    for (int i = 1; i <= 5; i++) {
-      final imageUrl = json['image_$i'] as String?;
-      if (imageUrl != null && imageUrl.isNotEmpty) {
-        imageList.add(imageUrl);
-      }
+    if (json['images'] != null) {
+      imageList = List<String>.from(json['images'] as List);
     }
 
     return Vehicle(
@@ -95,7 +92,7 @@ class Vehicle {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {
+    return {
       'id': id,
       'name': name,
       'model': model,
@@ -115,14 +112,8 @@ class Vehicle {
       'is_available': isAvailable,
       'is_featured': isFeatured,
       'created_at': createdAt.toIso8601String(),
+      'images': images, // JSON array sifatida
     };
-
-    // Rasmlarni 5 ta ustunга joylash
-    for (int i = 1; i <= 5; i++) {
-      data['image_$i'] = i <= images.length ? images[i - 1] : null;
-    }
-
-    return data;
   }
 
   String? get primaryImageUrl {
