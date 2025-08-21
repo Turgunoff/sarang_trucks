@@ -203,19 +203,29 @@ class CategoryList extends StatelessWidget {
   }
 
   void _onCategoryTap(BuildContext context, Category category) {
-    // Show success feedback
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '${category.name} kategoriyasiga o\'tish...',
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 1),
+  // VehicleProvider orqali filter qo'llash
+  context.read<VehicleProvider>().applyFilters(categoryId: category.id);
+  
+  // MainScreen'dagi tab controller'ga murojaat qilish
+  final mainScreenState = context.findAncestorStateOfType<_MainScreenState>();
+  if (mainScreenState != null) {
+    mainScreenState.onTabTapped(1); // Catalog tab (index 1)
+  }
+  
+  // Success feedback
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        '${category.name} kategoriyasi tanlandi',
+        style: const TextStyle(fontWeight: FontWeight.w500),
       ),
-    );
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      duration: const Duration(seconds: 2),
+    ),
+  );
+}
 
     // TODO: Navigate to catalog with category filter
     // context.read<VehicleProvider>().applyFilters(categoryId: category.id);
