@@ -1,4 +1,4 @@
-// lib/models/vehicle.dart
+// lib/models/vehicle.dart - TUZATILGAN VERSIYA
 import 'category.dart';
 
 enum EngineType { diesel, petrol }
@@ -25,7 +25,7 @@ class Vehicle {
   final bool isAvailable;
   final bool isFeatured;
   final DateTime createdAt;
-  final List<String> images; // Soddalashtirilgan rasm ro'yxati
+  final List<String> images;
 
   Vehicle({
     required this.id,
@@ -51,7 +51,6 @@ class Vehicle {
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
-    // Rasmlar JSON array'dan olish
     List<String> imageList = [];
     if (json['images'] != null) {
       imageList = List<String>.from(json['images'] as List);
@@ -112,10 +111,11 @@ class Vehicle {
       'is_available': isAvailable,
       'is_featured': isFeatured,
       'created_at': createdAt.toIso8601String(),
-      'images': images, // JSON array sifatida
+      'images': images,
     };
   }
 
+  // 🔧 QUYIDAGI METODLAR QO'SHILDI
   String? get primaryImageUrl {
     return images.isNotEmpty ? images.first : null;
   }
@@ -136,6 +136,26 @@ class Vehicle {
       case TransmissionType.automatic:
         return 'Avtomatik';
     }
+  }
+
+  // 🔧 QOSHILGAN: Capacity text
+  String get capacityText {
+    return '${capacityTons.toStringAsFixed(1)} t';
+  }
+
+  // 🔧 QOSHILGAN: Formatted prices
+  String get formattedDailyPrice {
+    return '${priceDaily.toStringAsFixed(0)} so\'m/kun';
+  }
+
+  String? get formattedHourlyPrice {
+    if (priceHourly == null) return null;
+    return '${priceHourly!.toStringAsFixed(0)} so\'m/soat';
+  }
+
+  String? get formattedWeeklyPrice {
+    if (priceWeekly == null) return null;
+    return '${priceWeekly!.toStringAsFixed(0)} so\'m/hafta';
   }
 
   @override

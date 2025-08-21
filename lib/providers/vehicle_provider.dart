@@ -1,3 +1,4 @@
+// lib/providers/vehicle_provider.dart - TUZATILGAN VERSIYA
 import 'package:flutter/material.dart';
 import '../models/vehicle.dart';
 import '../models/category.dart';
@@ -9,11 +10,11 @@ class VehicleProvider extends ChangeNotifier {
   List<Category> _categories = [];
   List<Vehicle> _searchResults = [];
   List<String> _favorites = [];
-  
+
   bool _isLoading = false;
   bool _isSearching = false;
   String? _error;
-  
+
   // Filter states
   String? _selectedCategoryId;
   double? _minCapacity;
@@ -32,7 +33,7 @@ class VehicleProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isSearching => _isSearching;
   String? get error => _error;
-  
+
   // Filter getters
   String? get selectedCategoryId => _selectedCategoryId;
   double? get minCapacity => _minCapacity;
@@ -42,6 +43,16 @@ class VehicleProvider extends ChangeNotifier {
   bool get hasAC => _hasAC;
   bool get hasGPS => _hasGPS;
 
+  // ✅ YANGI - Statistics getter
+  Map<String, dynamic> get statistics {
+    return {
+      'totalVehicles': _vehicles.length + _featuredVehicles.length,
+      'categoriesCount': _categories.length,
+      'featuredCount': _featuredVehicles.length,
+      'availableCount': _vehicles.where((v) => v.isAvailable).length,
+    };
+  }
+
   VehicleProvider() {
     _loadFavorites();
     _loadInitialData();
@@ -49,10 +60,7 @@ class VehicleProvider extends ChangeNotifier {
 
   // Load initial data
   Future<void> _loadInitialData() async {
-    await Future.wait([
-      loadCategories(),
-      loadFeaturedVehicles(),
-    ]);
+    await Future.wait([loadCategories(), loadFeaturedVehicles()]);
   }
 
   // Load categories
@@ -69,19 +77,16 @@ class VehicleProvider extends ChangeNotifier {
   }
 
   // Load vehicles with filters
-  Future<void> loadVehicles({
-    bool refresh = false,
-    int offset = 0,
-  }) async {
+  Future<void> loadVehicles({bool refresh = false, int offset = 0}) async {
     try {
       if (refresh) {
         offset = 0;
         _vehicles.clear();
       }
-      
+
       setLoading(true);
       _error = null;
-      
+
       final newVehicles = await SupabaseService.getVehicles(
         categoryId: _selectedCategoryId,
         minCapacity: _minCapacity,
@@ -89,7 +94,7 @@ class VehicleProvider extends ChangeNotifier {
         limit: 20,
         offset: offset,
       );
-      
+
       if (refresh || offset == 0) {
         _vehicles = newVehicles;
       } else {
@@ -125,7 +130,7 @@ class VehicleProvider extends ChangeNotifier {
       _isSearching = true;
       _searchQuery = query;
       _error = null;
-      
+
       _searchResults = await SupabaseService.searchVehicles(query);
     } catch (e) {
       _error = SupabaseService.getErrorMessage(e);
@@ -150,7 +155,7 @@ class VehicleProvider extends ChangeNotifier {
     _hasDriver = hasDriver ?? _hasDriver;
     _hasAC = hasAC ?? _hasAC;
     _hasGPS = hasGPS ?? _hasGPS;
-    
+
     await loadVehicles(refresh: true);
   }
 
@@ -162,7 +167,7 @@ class VehicleProvider extends ChangeNotifier {
     _hasDriver = false;
     _hasAC = false;
     _hasGPS = false;
-    
+
     await loadVehicles(refresh: true);
   }
 
@@ -180,10 +185,10 @@ class VehicleProvider extends ChangeNotifier {
     } else {
       _favorites.add(vehicleId);
     }
-    
+
     // Save to SharedPreferences
     // await _saveFavorites();
-    
+
     notifyListeners();
   }
 
@@ -194,7 +199,9 @@ class VehicleProvider extends ChangeNotifier {
 
   // Get favorite vehicles
   List<Vehicle> getFavoriteVehicles() {
-    return _vehicles.where((vehicle) => _favorites.contains(vehicle.id)).toList();
+    return _vehicles
+        .where((vehicle) => _favorites.contains(vehicle.id))
+        .toList();
   }
 
   // Set loading state

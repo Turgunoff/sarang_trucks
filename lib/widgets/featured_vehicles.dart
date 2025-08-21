@@ -1,4 +1,4 @@
-// lib/widgets/featured_vehicles.dart - YAXSHILANGAN VERSIYA
+// lib/widgets/featured_vehicles.dart - TUZATILGAN VERSIYA
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -18,7 +18,7 @@ class FeaturedVehicles extends StatelessWidget {
         }
 
         return SizedBox(
-          height: 280, // Increased height for better visuals
+          height: 280,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
@@ -39,11 +39,15 @@ class FeaturedVehicles extends StatelessWidget {
       duration: Duration(milliseconds: 800 + (index * 200)),
       tween: Tween(begin: 0.0, end: 1.0),
       curve: Curves.easeOutBack,
-      builder: (context, value, child) {
+      builder: (context, animationValue, child) {
+        // 🔧 TUZATISH: animationValue ni 0.0-1.0 orasida saqlash
+        final safeAnimationValue = animationValue.clamp(0.0, 1.0);
+        final translateOffset = 50 * (1 - safeAnimationValue);
+
         return Transform.translate(
-          offset: Offset(50 * (1 - value), 0),
+          offset: Offset(translateOffset, 0),
           child: Opacity(
-            opacity: value,
+            opacity: safeAnimationValue, // 🔧 clamp qilingan qiymat ishlatish
             child: Container(
               width: 220,
               margin: const EdgeInsets.only(right: 16),
@@ -65,10 +69,10 @@ class FeaturedVehicles extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ✅ Vehicle image with overlay
+                      // Vehicle image with overlay
                       _buildVehicleImage(context, vehicle),
-                      
-                      // ✅ Vehicle info section
+
+                      // Vehicle info section
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
@@ -81,40 +85,53 @@ class FeaturedVehicles extends StatelessWidget {
                                   Expanded(
                                     child: Text(
                                       vehicle.name,
-                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).colorScheme.onSurface,
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  
+
                                   // Favorite button
                                   _buildFavoriteButton(context, vehicle),
                                 ],
                               ),
-                              
+
                               const SizedBox(height: 6),
-                              
+
                               // Model and category
                               Text(
                                 vehicle.model,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.7),
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              
+
                               const SizedBox(height: 8),
-                              
+
                               // Category badge
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -122,18 +139,20 @@ class FeaturedVehicles extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 ),
                               ),
-                              
+
                               const SizedBox(height: 12),
-                              
+
                               // Specifications
                               _buildSpecsRow(context, vehicle),
-                              
+
                               const Spacer(),
-                              
+
                               // Price and action
                               _buildPriceSection(context, vehicle),
                             ],
@@ -175,13 +194,15 @@ class FeaturedVehicles extends StatelessWidget {
                     imageUrl: vehicle.primaryImageUrl!,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    placeholder: (context, url) => _buildImagePlaceholder(context),
-                    errorWidget: (context, url, error) => _buildImagePlaceholder(context),
+                    placeholder: (context, url) =>
+                        _buildImagePlaceholder(context),
+                    errorWidget: (context, url, error) =>
+                        _buildImagePlaceholder(context),
                   )
                 : _buildImagePlaceholder(context),
           ),
         ),
-        
+
         // Gradient overlay
         Container(
           height: 140,
@@ -190,14 +211,11 @@ class FeaturedVehicles extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                Colors.black.withOpacity(0.3),
-              ],
+              colors: [Colors.transparent, Colors.black.withOpacity(0.3)],
             ),
           ),
         ),
-        
+
         // Featured badge
         Positioned(
           top: 12,
@@ -218,11 +236,7 @@ class FeaturedVehicles extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(
-                  Icons.star,
-                  size: 14,
-                  color: Colors.white,
-                ),
+                Icon(Icons.star, size: 14, color: Colors.white),
                 SizedBox(width: 4),
                 Text(
                   'TOP',
@@ -236,7 +250,7 @@ class FeaturedVehicles extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // Available status
         if (vehicle.isAvailable)
           Positioned(
@@ -299,16 +313,18 @@ class FeaturedVehicles extends StatelessWidget {
     return Consumer<VehicleProvider>(
       builder: (context, provider, child) {
         final isFavorite = provider.isFavorite(vehicle.id);
-        
+
         return InkWell(
           onTap: () {
             provider.toggleFavorite(vehicle.id);
-            
+
             // Show feedback
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  isFavorite ? 'Sevimlilardan olib tashlandi' : 'Sevimlilarga qo\'shildi',
+                  isFavorite
+                      ? 'Sevimlilardan olib tashlandi'
+                      : 'Sevimlilarga qo\'shildi',
                 ),
                 duration: const Duration(seconds: 1),
                 behavior: SnackBarBehavior.floating,
@@ -322,12 +338,12 @@ class FeaturedVehicles extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isFavorite 
-                  ? Colors.red.withOpacity(0.1) 
+              color: isFavorite
+                  ? Colors.red.withOpacity(0.1)
                   : Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isFavorite 
+                color: isFavorite
                     ? Colors.red.withOpacity(0.3)
                     : Theme.of(context).colorScheme.outline.withOpacity(0.2),
               ),
@@ -335,7 +351,9 @@ class FeaturedVehicles extends StatelessWidget {
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               size: 18,
-              color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: isFavorite
+                  ? Colors.red
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             ),
           ),
         );
@@ -349,12 +367,12 @@ class FeaturedVehicles extends StatelessWidget {
         _buildSpecItem(
           context,
           icon: Icons.fitness_center,
-          text: vehicle.capacityText,
+          text: '${vehicle.capacityTons} t',
           color: Colors.blue,
         ),
-        
+
         const SizedBox(width: 12),
-        
+
         _buildSpecItem(
           context,
           icon: Icons.local_gas_station,
@@ -365,7 +383,8 @@ class FeaturedVehicles extends StatelessWidget {
     );
   }
 
-  Widget _buildSpecItem(BuildContext context, {
+  Widget _buildSpecItem(
+    BuildContext context, {
     required IconData icon,
     required String text,
     required Color color,
@@ -379,11 +398,7 @@ class FeaturedVehicles extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: color,
-          ),
+          Icon(icon, size: 14, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -407,23 +422,25 @@ class FeaturedVehicles extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              vehicle.formattedDailyPrice,
+              '${vehicle.priceDaily.toStringAsFixed(0)} so\'m/kun',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            
-            if (vehicle.formattedHourlyPrice != null)
+
+            if (vehicle.priceHourly != null)
               Text(
-                vehicle.formattedHourlyPrice!,
+                '${vehicle.priceHourly!.toStringAsFixed(0)} so\'m/soat',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
                 ),
               ),
           ],
         ),
-        
+
         // Action button
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -450,11 +467,7 @@ class FeaturedVehicles extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 4),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 12,
-                color: Colors.white,
-              ),
+              Icon(Icons.arrow_forward_ios, size: 12, color: Colors.white),
             ],
           ),
         ),
@@ -489,9 +502,9 @@ class FeaturedVehicles extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             Text(
               'Tavsiya etilgan mashinalar',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -499,9 +512,9 @@ class FeaturedVehicles extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             Text(
               'Yuklanmoqda...',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -515,20 +528,19 @@ class FeaturedVehicles extends StatelessWidget {
   }
 
   void _navigateToVehicleDetails(BuildContext context, Vehicle vehicle) {
-    // Add smooth transition animation
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             VehicleDetailsScreen(vehicle: vehicle),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeInOut,
-            )),
+            position:
+                Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+                ),
             child: child,
           );
         },
