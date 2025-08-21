@@ -23,7 +23,7 @@ class FeaturedVehicles extends StatelessWidget {
         }
 
         return SizedBox(
-          height: 200,
+          height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: vehicleProvider.featuredVehicles.length,
