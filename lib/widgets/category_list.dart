@@ -1,8 +1,9 @@
-// lib/widgets/category_list.dart - YAXSHILANGAN VERSIYA
+// lib/widgets/category_list.dart - TUZATILGAN VERSIYA
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/category.dart';
+import '../screens/catalog_screen.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({super.key});
@@ -202,33 +203,67 @@ class CategoryList extends StatelessWidget {
     );
   }
 
-  void _onCategoryTap(BuildContext context, Category category) {
-  // VehicleProvider orqali filter qo'llash
-  context.read<VehicleProvider>().applyFilters(categoryId: category.id);
-  
-  // MainScreen'dagi tab controller'ga murojaat qilish
-  final mainScreenState = context.findAncestorStateOfType<_MainScreenState>();
-  if (mainScreenState != null) {
-    mainScreenState.onTabTapped(1); // Catalog tab (index 1)
-  }
-  
-  // Success feedback
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        '${category.name} kategoriyasi tanlandi',
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      duration: const Duration(seconds: 2),
-    ),
-  );
-}
+  // 🔧 TUZATILGAN: Category tanlanganda catalog screen'ga o'tish
+  void _onCategoryTap(BuildContext context, Category category) async {
+    try {
+      // 1. Filter qo'llash
+      final vehicleProvider = context.read<VehicleProvider>();
+      await vehicleProvider.applyFilters(categoryId: category.id);
 
-    // TODO: Navigate to catalog with category filter
-    // context.read<VehicleProvider>().applyFilters(categoryId: category.id);
-    // Navigator.pushNamed(context, '/catalog');
+      // 2. Catalog screen'ga navigate qilish
+      Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (context) => const CatalogScreen()));
+
+      // 3. Success feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.category, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  '${category.name} kategoriyasi tanlandi',
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      debugPrint('❌ Category tanlashda xatolik: $e');
+
+      // Error feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Xatolik yuz berdi. Qayta urinib ko\'ring.',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

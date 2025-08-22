@@ -109,6 +109,7 @@ class _CatalogScreenState extends State<CatalogScreen>
             expandedHeight: 120.0,
             floating: false,
             pinned: true,
+            automaticallyImplyLeading: false,
             elevation: 0,
             backgroundColor: Colors.transparent,
             flexibleSpace: Container(
