@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:sarang_trucks/constants/app_constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../screens/catalog_screen.dart';
+
 class HeroSection extends StatefulWidget {
   const HeroSection({super.key});
 
@@ -387,6 +389,10 @@ class _HeroSectionState extends State<HeroSection>
 
     // TODO: Navigate to catalog
     // context.findAncestorStateOfType<_MainScreenState>()?.onTabTapped(1);
+    // Navigate to catalog screen
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const CatalogScreen()));
   }
 
   void _showContactModal(BuildContext context) {
